@@ -1,14 +1,24 @@
-# 🦙 Llama 3.1/3.2 Comprehensive Setup
+# 🦙 Arabic Llama Training & CLI System
 
-This repository provides a complete setup for working with Meta's Llama 3.1 and 3.2 models locally. These are among the best open-source language models available, offering excellent performance across various tasks.
+A comprehensive, production-ready system for training and deploying Arabic-optimized Llama models with an advanced CLI interface. This project provides everything needed to work with Arabic text processing, model training, and interactive AI assistance.
 
-## 🌟 What's Included
+## 🎯 Latest Features (v2.0)
 
-- **Complete setup automation** for Llama models
-- **Python API interface** for easy integration
-- **Multiple usage examples** covering different use cases
-- **Interactive chat interface**
-- **Code generation, text analysis, and more**
+- **🎨 Advanced CLI Interface** - Rich, colorful, interactive command-line interface
+- **🔧 Real-time System Monitoring** - Live status updates and performance tracking
+- **📚 Arabic Text Processing** - Complete RTL support with proper character reshaping
+- **💬 Interactive Model Testing** - Test models with automatic result logging
+- **📊 Analytics & Reporting** - Comprehensive usage statistics and model performance data
+- **🚀 One-Click Training** - Simplified model training with guided workflows
+
+## 🌟 Core Features
+
+- **Complete Arabic text processing pipeline** with RTL support
+- **Professional CLI interface** with Rich library integration
+- **Automated model training and fine-tuning** for Arabic content
+- **Real-time performance monitoring** and system diagnostics
+- **Interactive chat testing** with result tracking
+- **Comprehensive error handling** and recovery mechanisms
 
 ## 🚀 Quick Start
 
