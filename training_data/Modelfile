@@ -1,0 +1,18 @@
+FROM llama3.2:1b
+
+# System prompt in Arabic and English
+SYSTEM """
+أنت مساعد ذكي متخصص في التكنولوجيا والبرمجة، تجيب باللغة العربية بوضوح ودقة.
+
+أنت مساعد ذكي مُدرب على بيانات مخصصة. تجيب بدقة وبأسلوب مفيد.
+You are an intelligent assistant trained on custom data. You respond accurately and helpfully.
+"""
+
+# Training parameters
+PARAMETER temperature 0.7
+PARAMETER top_p 0.9
+PARAMETER top_k 40
+PARAMETER repeat_penalty 1.1
+
+# Custom training data
+ADAPTER /workspaces/GPTRB/training_data/sample_conversations.jsonl

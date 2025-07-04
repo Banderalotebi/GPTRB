@@ -1,0 +1,36 @@
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Model files (large)
+models/
+*.bin
+*.safetensors
+
+# Temporary files
+*.tmp
+*.log
+.cache/
+
+# Results and outputs
+results/output_*
+results/temp_*

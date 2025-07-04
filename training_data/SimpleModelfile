@@ -1,0 +1,11 @@
+FROM llama3.2:1b
+
+# System prompt for Arabic assistant
+SYSTEM """أنت مساعد ذكي متخصص في التكنولوجيا والبرمجة. تجيب باللغة العربية بوضوح ودقة وتساعد المستخدمين في فهم المفاهيم التقنية."""
+
+# Model parameters
+PARAMETER temperature 0.7
+PARAMETER top_p 0.9
+PARAMETER top_k 40
+PARAMETER repeat_penalty 1.1
+PARAMETER num_ctx 2048
