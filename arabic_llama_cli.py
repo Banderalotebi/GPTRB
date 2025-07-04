@@ -542,13 +542,65 @@ class ArabicLlamaCLI:
         subprocess.run([sys.executable, 'text_data_processor.py'])
     
     def train_models(self):
-        """تدريب النماذج"""
+        """تدريب النماذج مع إمكانية المراقبة المباشرة"""
         if RICH_AVAILABLE:
             self.console.print("[bold blue]🚀 تدريب النماذج[/bold blue]")
         else:
             print("🚀 تدريب النماذج")
         
-        subprocess.run([sys.executable, 'llama_finetuning.py'])
+        # خيارات التدريب
+        options = [
+            "1. تدريب عادي (Normal training)",
+            "2. تدريب مع مراقبة مباشرة (Training with real-time monitoring)",
+            "3. فتح مراقب التدريب فقط (Open training monitor only)",
+            "4. العودة للقائمة الرئيسية (Back to main menu)"
+        ]
+        
+        if RICH_AVAILABLE:
+            self.console.print("[cyan]اختر نوع التدريب:[/cyan]")
+            for option in options:
+                self.console.print(f"  {option}")
+        else:
+            print("اختر نوع التدريب:")
+            for option in options:
+                print(f"  {option}")
+        
+        choice = input("\nالاختيار (1-4): ").strip()
+        
+        if choice == "1":
+            # تدريب عادي
+            subprocess.run([sys.executable, 'llama_finetuning.py'])
+            
+        elif choice == "2":
+            # تدريب مع مراقبة مباشرة
+            if RICH_AVAILABLE:
+                self.console.print("[green]🌐 بدء التدريب مع المراقبة المباشرة...[/green]")
+            else:
+                print("🌐 بدء التدريب مع المراقبة المباشرة...")
+            
+            # تشغيل المراقب في الخلفية أولاً
+            subprocess.Popen([sys.executable, 'training_monitor.py'])
+            time.sleep(2)  # انتظار حتى يبدأ المراقب
+            
+            # ثم تشغيل التدريب
+            subprocess.run([sys.executable, 'llama_finetuning.py'])
+            
+        elif choice == "3":
+            # فتح مراقب التدريب فقط
+            if RICH_AVAILABLE:
+                self.console.print("[blue]📊 فتح مراقب التدريب...[/blue]")
+            else:
+                print("📊 فتح مراقب التدريب...")
+            
+            subprocess.run([sys.executable, 'training_monitor.py'])
+            
+        elif choice == "4":
+            return
+        else:
+            if RICH_AVAILABLE:
+                self.console.print("[red]❌ اختيار غير صحيح[/red]")
+            else:
+                print("❌ اختيار غير صحيح")
     
     def system_settings(self):
         """إعدادات النظام"""
