@@ -8,9 +8,12 @@ This script provides tools for fine-tuning Llama models with your custom text da
 import os
 import json
 import torch
+import time
+import threading
 from pathlib import Path
 from typing import Optional, Dict, List
 import subprocess
+from training_monitor import start_monitor
 
 class LlamaFineTuner:
     def __init__(self, model_name: str = "llama3.2:3b"):
@@ -50,36 +53,117 @@ ADAPTER {training_data_path}
         return str(modelfile_path)
     
     def fine_tune_with_ollama(self, training_file: str, custom_model_name: str, 
-                             system_prompt: str = None) -> bool:
+                             system_prompt: str = None, enable_monitor: bool = True) -> bool:
         """
-        Fine-tune using Ollama's built-in capabilities
-        الضبط الدقيق باستخدام إمكانيات Ollama المدمجة
+        Fine-tune using Ollama's built-in capabilities with real-time monitoring
+        الضبط الدقيق باستخدام إمكانيات Ollama المدمجة مع المراقبة المباشرة
         """
         if not system_prompt:
             system_prompt = "أنت مساعد ذكي مُدرب على بيانات مخصصة"
         
-        print(f"🔧 Fine-tuning {self.model_name} with {training_file}")
-        print(f"📝 Creating custom model: {custom_model_name}")
+        monitor = None
         
         try:
+            # Start training monitor if enabled
+            if enable_monitor:
+                print("🌐 Starting training monitor...")
+                monitor = start_monitor(port=5000, open_browser=True)
+                time.sleep(2)  # Give the monitor time to start
+                
+                # Initialize training session
+                with open(training_file, 'r', encoding='utf-8') as f:
+                    dataset_size = sum(1 for _ in f)
+                
+                monitor.start_training_session(
+                    model_name=custom_model_name,
+                    total_epochs=1,  # Ollama typically does one pass
+                    dataset_size=dataset_size,
+                    batch_size=1
+                )
+        
+            print(f"🔧 Fine-tuning {self.model_name} with {training_file}")
+            print(f"📝 Creating custom model: {custom_model_name}")
+            
+            if monitor:
+                monitor.add_log(f"Starting fine-tuning for {custom_model_name}")
+                monitor.add_log(f"Base model: {self.model_name}")
+                monitor.add_log(f"Training data: {training_file}")
+                monitor.update_training_status('training')
+            
             # Create Modelfile
             modelfile_path = self.create_modelfile(system_prompt, training_file)
             print(f"✅ Created Modelfile: {modelfile_path}")
             
-            # Create custom model with Ollama
+            if monitor:
+                monitor.add_log(f"Created Modelfile: {modelfile_path}")
+            
+            # Create custom model with Ollama (with real-time output)
             cmd = ["ollama", "create", custom_model_name, "-f", modelfile_path]
-            result = subprocess.run(cmd, capture_output=True, text=True, check=True)
             
-            print(f"✅ Successfully created custom model: {custom_model_name}")
-            print("🎯 You can now use it with:")
-            print(f"   ollama run {custom_model_name}")
+            if monitor:
+                monitor.add_log("Starting Ollama model creation...")
+                monitor.update_training_status('training', current_step=1)
             
-            return True
+            # Run process with real-time output monitoring
+            process = subprocess.Popen(
+                cmd, 
+                stdout=subprocess.PIPE, 
+                stderr=subprocess.STDOUT,
+                text=True,
+                universal_newlines=True
+            )
             
-        except subprocess.CalledProcessError as e:
-            print(f"❌ Error creating model: {e}")
-            print(f"Output: {e.stdout}")
-            print(f"Error: {e.stderr}")
+            step_count = 0
+            start_time = time.time()
+            
+            # Monitor the training process output
+            for line in process.stdout:
+                line = line.strip()
+                if line:
+                    print(line)
+                    
+                    if monitor:
+                        monitor.add_log(line)
+                        step_count += 1
+                        elapsed = time.time() - start_time
+                        
+                        # Update progress
+                        monitor.update_training_status(
+                            'training',
+                            current_step=step_count,
+                            elapsed_time=elapsed
+                        )
+            
+            process.wait()
+            
+            if process.returncode == 0:
+                print(f"✅ Successfully created custom model: {custom_model_name}")
+                print("🎯 You can now use it with:")
+                print(f"   ollama run {custom_model_name}")
+                
+                if monitor:
+                    monitor.add_log(f"Successfully created model: {custom_model_name}", "info")
+                    monitor.finish_training_session()
+                
+                return True
+            else:
+                error_msg = f"Error creating model (exit code: {process.returncode})"
+                print(f"❌ {error_msg}")
+                
+                if monitor:
+                    monitor.add_log(error_msg, "error")
+                    monitor.update_training_status('error')
+                
+                return False
+            
+        except Exception as e:
+            error_msg = f"Error during fine-tuning: {e}"
+            print(f"❌ {error_msg}")
+            
+            if monitor:
+                monitor.add_log(error_msg, "error")
+                monitor.update_training_status('error')
+            
             return False
     
     def prepare_training_examples(self, jsonl_file: str) -> List[str]:

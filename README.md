@@ -1,10 +1,11 @@
 # 🦙 Arabic Llama Training & CLI System
 
-A comprehensive, production-ready system for training and deploying Arabic-optimized Llama models with an advanced CLI interface. This project provides everything needed to work with Arabic text processing, model training, and interactive AI assistance.
+A comprehensive, production-ready system for training and deploying Arabic-optimized Llama models with an advanced CLI interface and **real-time training monitoring**. This project provides everything needed to work with Arabic text processing, model training, and interactive AI assistance.
 
-## 🎯 Latest Features (v2.0)
+## 🎯 Latest Features (v2.1)
 
-- **🎨 Advanced CLI Interface** - Rich, colorful, interactive command-line interface
+- **� Real-time Training Monitor** - Web-based dashboard showing live training progress, metrics, and logs
+- **�🎨 Advanced CLI Interface** - Rich, colorful, interactive command-line interface
 - **🔧 Real-time System Monitoring** - Live status updates and performance tracking
 - **📚 Arabic Text Processing** - Complete RTL support with proper character reshaping
 - **💬 Interactive Model Testing** - Test models with automatic result logging
@@ -13,6 +14,7 @@ A comprehensive, production-ready system for training and deploying Arabic-optim
 
 ## 🌟 Core Features
 
+- **🌐 Real-time Training Dashboard** - Web interface showing live training metrics, loss curves, and logs
 - **Complete Arabic text processing pipeline** with RTL support
 - **Professional CLI interface** with Rich library integration
 - **Automated model training and fine-tuning** for Arabic content
@@ -48,10 +50,49 @@ ollama pull llama3.1:8b    # High quality (4.7GB)
 
 | File | Description |
 |------|-------------|
+| `training_monitor.py` | **🌐 Real-time training monitor web interface** |
+| `arabic_llama_cli.py` | **🎨 Advanced Arabic CLI with training monitor integration** |
 | `llama_setup.py` | Interactive setup and model management tool |
 | `llama_api.py` | Python API for working with Llama models |
 | `llama_examples.py` | Comprehensive examples and use cases |
+| `llama_finetuning.py` | Model fine-tuning with real-time monitoring |
+| `quick_arabic_fix.py` | Quick Arabic text display correction |
+| `text_data_processor.py` | Advanced text processing and preparation |
+| `demo_training_monitor.py` | Training monitor demonstration |
+| `integrated_training_demo.py` | Complete system integration demo |
 | `setup_llama.sh` | Automated setup script |
+
+## 🌐 Real-time Training Monitor
+
+The training monitor provides a beautiful web interface to track training progress in real-time:
+
+### Features
+- **📊 Live metrics dashboard** - Real-time loss curves, learning rate, and progress
+- **📝 Training logs** - Live log streaming with color-coded message levels
+- **⏱️ Time tracking** - Elapsed time and estimated remaining time
+- **📈 Interactive charts** - Dynamic loss visualization with Chart.js
+- **📱 Responsive design** - Works on desktop and mobile devices
+
+### Quick Start
+```python
+# Start the training monitor
+python training_monitor.py
+
+# Or integrate with training
+from training_monitor import start_monitor
+monitor = start_monitor(port=5000)
+
+# Your training code here...
+monitor.update_training_status('training', current_step=100, loss=0.5)
+```
+
+### Web Interface
+Open `http://localhost:5000` to view the real-time dashboard with:
+- Training progress bars
+- Live loss charts
+- Model information
+- Training logs with timestamps
+- System status indicators
 
 ## 🎯 Usage Examples
 
